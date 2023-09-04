@@ -103,11 +103,11 @@ pub struct FunctionResult<'a> {
 pub struct EntryPoint {
     pub stage: crate::ShaderStage,
     pub early_depth_test: Option<crate::EarlyDepthTest>,
-    pub workgroup_size: [u32; 3],
+    pub workgroup_size: Option<[u32; 3]>,
 }
 
 #[cfg(doc)]
-use crate::front::wgsl::lower::{ExpressionContext, StatementContext};
+use crate::front::wgsl::lower::{RuntimeExpressionContext, StatementContext};
 
 #[derive(Debug)]
 pub struct Function<'a> {
@@ -132,14 +132,14 @@ pub struct Function<'a> {
     /// During lowering, [`LocalDecl`] statements add entries to a per-function
     /// table that maps `Handle<Local>` values to their Naga representations,
     /// accessed via [`StatementContext::local_table`] and
-    /// [`ExpressionContext::local_table`]. This table is then consulted when
+    /// [`RuntimeExpressionContext::local_table`]. This table is then consulted when
     /// lowering subsequent [`Ident`] expressions.
     ///
     /// [`LocalDecl`]: StatementKind::LocalDecl
     /// [`arguments`]: Function::arguments
     /// [`Ident`]: Expression::Ident
     /// [`StatementContext::local_table`]: StatementContext::local_table
-    /// [`ExpressionContext::local_table`]: ExpressionContext::local_table
+    /// [`RuntimeExpressionContext::local_table`]: RuntimeExpressionContext::local_table
     pub locals: Arena<Local>,
 
     pub body: Block<'a>,

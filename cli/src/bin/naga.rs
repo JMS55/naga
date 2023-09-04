@@ -30,12 +30,19 @@ struct Args {
     #[argh(option)]
     buffer_bounds_check_policy: Option<BoundsCheckPolicyArg>,
 
-    /// what policy to use for texture bounds checking.
+    /// what policy to use for texture loads bounds checking.
     ///
     /// Possible values are the same as for `index-bounds-check-policy`. If
     /// omitted, defaults to the index bounds check policy.
     #[argh(option)]
-    image_bounds_check_policy: Option<BoundsCheckPolicyArg>,
+    image_load_bounds_check_policy: Option<BoundsCheckPolicyArg>,
+
+    /// what policy to use for texture stores bounds checking.
+    ///
+    /// Possible values are the same as for `index-bounds-check-policy`. If
+    /// omitted, defaults to the index bounds check policy.
+    #[argh(option)]
+    image_store_bounds_check_policy: Option<BoundsCheckPolicyArg>,
 
     /// directory to dump the SPIR-V block context dump to
     #[argh(option)]
@@ -67,6 +74,10 @@ struct Args {
     /// specify file path to process STDIN as
     #[argh(option)]
     stdin_file_path: Option<String>,
+
+    /// generate debug symbols, only works for spv-out for now
+    #[argh(option, short = 'g')]
+    generate_debug_symbols: Option<bool>,
 
     /// show version
     #[argh(switch)]
@@ -144,13 +155,13 @@ impl FromStr for GlslProfileArg {
 }
 
 #[derive(Default)]
-struct Parameters {
+struct Parameters<'a> {
     validation_flags: naga::valid::ValidationFlags,
     bounds_check_policies: naga::proc::BoundsCheckPolicies,
     entry_point: Option<String>,
     keep_coordinate_space: bool,
     spv_block_ctx_dump_prefix: Option<String>,
-    spv: naga::back::spv::Options,
+    spv: naga::back::spv::Options<'a>,
     msl: naga::back::msl::Options,
     glsl: naga::back::glsl::Options,
     hlsl: naga::back::hlsl::Options,
@@ -244,7 +255,11 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         Some(arg) => arg.0,
         None => params.bounds_check_policies.index,
     };
-    params.bounds_check_policies.image = match args.image_bounds_check_policy {
+    params.bounds_check_policies.image_load = match args.image_load_bounds_check_policy {
+        Some(arg) => arg.0,
+        None => params.bounds_check_policies.index,
+    };
+    params.bounds_check_policies.image_store = match args.image_store_bounds_check_policy {
         Some(arg) => arg.0,
         None => params.bounds_check_policies.index,
     };
@@ -336,9 +351,9 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     {
         Ok(info) => Some(info),
         Err(error) => {
-            if let Some(input) = input_text {
+            if let Some(input) = &input_text {
                 let filename = input_path.file_name().and_then(std::ffi::OsStr::to_str);
-                emit_annotated_error(&error, filename.unwrap_or("input"), &input);
+                emit_annotated_error(&error, filename.unwrap_or("input"), input);
             }
             print_err(&error);
             None
@@ -415,6 +430,21 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
                 };
 
                 params.spv.bounds_check_policies = params.bounds_check_policies;
+
+                //Insert Debug infos
+                params.spv.debug_info = args.generate_debug_symbols.and_then(|debug| {
+                    params.spv.flags.set(spv::WriterFlags::DEBUG, debug);
+
+                    if debug {
+                        Some(spv::DebugInfo {
+                            source_code: input_text.as_ref()?,
+                            file_name: input_path.file_name().and_then(std::ffi::OsStr::to_str)?,
+                        })
+                    } else {
+                        None
+                    }
+                });
+
                 params.spv.flags.set(
                     spv::WriterFlags::ADJUST_COORDINATE_SPACE,
                     !params.keep_coordinate_space,

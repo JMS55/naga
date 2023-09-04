@@ -1,7 +1,7 @@
 #[cfg(feature = "validate")]
 use super::{
-    compose::validate_compose, validate_atomic_compare_exchange_struct, FunctionInfo, ShaderStages,
-    TypeFlags,
+    compose::validate_compose, validate_atomic_compare_exchange_struct, FunctionInfo, ModuleInfo,
+    ShaderStages, TypeFlags,
 };
 #[cfg(feature = "validate")]
 use crate::arena::UniqueArena;
@@ -22,8 +22,10 @@ pub enum ExpressionError {
     InvalidBaseType(Handle<crate::Expression>),
     #[error("Accessing with index {0:?} can't be done")]
     InvalidIndexType(Handle<crate::Expression>),
-    #[error("Accessing index {1:?} is out of {0:?} bounds")]
-    IndexOutOfBounds(Handle<crate::Expression>, crate::ScalarValue),
+    #[error("Accessing {0:?} via a negative index is invalid")]
+    NegativeIndex(Handle<crate::Expression>),
+    #[error("Accessing index {1} is out of {0:?} bounds")]
+    IndexOutOfBounds(Handle<crate::Expression>, u32),
     #[error("The expression {0:?} may only be indexed by a constant")]
     IndexMustBeConstant(Handle<crate::Expression>),
     #[error("Function argument {0:?} doesn't exist")]
@@ -91,7 +93,7 @@ pub enum ExpressionError {
         has_ref: bool,
     },
     #[error("Sample offset constant {1:?} doesn't match the image dimension {0:?}")]
-    InvalidSampleOffset(crate::ImageDimension, Handle<crate::Constant>),
+    InvalidSampleOffset(crate::ImageDimension, Handle<crate::Expression>),
     #[error("Depth reference {0:?} is not a scalar float")]
     InvalidDepthReference(Handle<crate::Expression>),
     #[error("Depth sample level can only be Auto or Zero")]
@@ -151,6 +153,29 @@ impl<'a> std::ops::Index<Handle<crate::Expression>> for ExpressionTypeResolver<'
 
 #[cfg(feature = "validate")]
 impl super::Validator {
+    pub(super) fn validate_const_expression(
+        &self,
+        handle: Handle<crate::Expression>,
+        gctx: crate::proc::GlobalCtx,
+        mod_info: &mut ModuleInfo,
+    ) -> Result<(), super::ConstExpressionError> {
+        use crate::Expression as E;
+
+        match gctx.const_expressions[handle] {
+            E::Literal(_) | E::Constant(_) | E::ZeroValue(_) => {}
+            E::Compose { ref components, ty } => {
+                validate_compose(
+                    ty,
+                    gctx,
+                    components.iter().map(|&handle| mod_info[handle].clone()),
+                )?;
+            }
+            _ => return Err(super::ConstExpressionError::NonConst),
+        }
+
+        Ok(())
+    }
+
     pub(super) fn validate_expression(
         &self,
         root: Handle<crate::Expression>,
@@ -158,7 +183,7 @@ impl super::Validator {
         function: &crate::Function,
         module: &crate::Module,
         info: &FunctionInfo,
-        other_infos: &[FunctionInfo],
+        mod_info: &ModuleInfo,
     ) -> Result<ShaderStages, ExpressionError> {
         use crate::{Expression as E, ScalarKind as Sk, TypeInner as Ti};
 
@@ -205,27 +230,19 @@ impl super::Validator {
                 if let crate::proc::IndexableLength::Known(known_length) =
                     base_type.indexable_length(module)?
                 {
-                    if let E::Constant(k) = function.expressions[index] {
-                        if let crate::Constant {
-                            // We must treat specializable constants as unknown.
-                            specialization: None,
-                            // Non-scalar indices should have been caught above.
-                            inner: crate::ConstantInner::Scalar { value, .. },
-                            ..
-                        } = module.constants[k]
-                        {
-                            match value {
-                                crate::ScalarValue::Uint(u) if u >= known_length as u64 => {
-                                    return Err(ExpressionError::IndexOutOfBounds(base, value));
-                                }
-                                crate::ScalarValue::Sint(s)
-                                    if s < 0 || s >= known_length as i64 =>
-                                {
-                                    return Err(ExpressionError::IndexOutOfBounds(base, value));
-                                }
-                                _ => (),
+                    match module
+                        .to_ctx()
+                        .eval_expr_to_u32_from(index, &function.expressions)
+                    {
+                        Ok(value) => {
+                            if value >= known_length {
+                                return Err(ExpressionError::IndexOutOfBounds(base, value));
                             }
                         }
+                        Err(crate::proc::U32EvalError::Negative) => {
+                            return Err(ExpressionError::NegativeIndex(base))
+                        }
+                        Err(crate::proc::U32EvalError::NonConst) => {}
                     }
                 }
 
@@ -263,16 +280,10 @@ impl super::Validator {
 
                 let limit = resolve_index_limit(module, base, &resolver[base], true)?;
                 if index >= limit {
-                    return Err(ExpressionError::IndexOutOfBounds(
-                        base,
-                        crate::ScalarValue::Uint(limit as _),
-                    ));
+                    return Err(ExpressionError::IndexOutOfBounds(base, limit));
                 }
                 ShaderStages::all()
             }
-            E::Literal(_value) => ShaderStages::all(),
-            E::Constant(_handle) => ShaderStages::all(),
-            E::ZeroValue(_type) => ShaderStages::all(),
             E::Splat { size: _, value } => match resolver[value] {
                 Ti::Scalar { .. } => ShaderStages::all(),
                 ref other => {
@@ -299,6 +310,7 @@ impl super::Validator {
                 }
                 ShaderStages::all()
             }
+            E::Literal(_) | E::Constant(_) | E::ZeroValue(_) => ShaderStages::all(),
             E::Compose { ref components, ty } => {
                 validate_compose(
                     ty,
@@ -412,26 +424,17 @@ impl super::Validator {
                 }
 
                 // check constant offset
-                if let Some(const_handle) = offset {
-                    let good = match module.constants[const_handle].inner {
-                        crate::ConstantInner::Scalar {
-                            width: _,
-                            value: crate::ScalarValue::Sint(_),
-                        } => num_components == 1,
-                        crate::ConstantInner::Scalar { .. } => false,
-                        crate::ConstantInner::Composite { ty, .. } => {
-                            match module.types[ty].inner {
-                                Ti::Vector {
-                                    size,
-                                    kind: Sk::Sint,
-                                    ..
-                                } => size as u32 == num_components,
-                                _ => false,
-                            }
+                if let Some(const_expr) = offset {
+                    match *mod_info[const_expr].inner_with(&module.types) {
+                        Ti::Scalar { kind: Sk::Sint, .. } if num_components == 1 => {}
+                        Ti::Vector {
+                            size,
+                            kind: Sk::Sint,
+                            ..
+                        } if size as u32 == num_components => {}
+                        _ => {
+                            return Err(ExpressionError::InvalidSampleOffset(dim, const_expr));
                         }
-                    };
-                    if !good {
-                        return Err(ExpressionError::InvalidSampleOffset(dim, const_handle));
                     }
                 }
 
@@ -1011,31 +1014,48 @@ impl super::Validator {
                             ));
                         }
                     }
-                    Mf::Modf | Mf::Frexp | Mf::Ldexp => {
+                    Mf::Modf | Mf::Frexp => {
+                        if arg1_ty.is_some() | arg2_ty.is_some() | arg3_ty.is_some() {
+                            return Err(ExpressionError::WrongArgumentCount(fun));
+                        }
+                        if !matches!(
+                            *arg_ty,
+                            Ti::Scalar {
+                                kind: Sk::Float,
+                                ..
+                            } | Ti::Vector {
+                                kind: Sk::Float,
+                                ..
+                            },
+                        ) {
+                            return Err(ExpressionError::InvalidArgumentType(fun, 1, arg));
+                        }
+                    }
+                    Mf::Ldexp => {
                         let arg1_ty = match (arg1_ty, arg2_ty, arg3_ty) {
                             (Some(ty1), None, None) => ty1,
                             _ => return Err(ExpressionError::WrongArgumentCount(fun)),
                         };
-                        let (size0, width0) = match *arg_ty {
+                        let size0 = match *arg_ty {
                             Ti::Scalar {
-                                kind: Sk::Float,
-                                width,
-                            } => (None, width),
+                                kind: Sk::Float, ..
+                            } => None,
                             Ti::Vector {
                                 kind: Sk::Float,
                                 size,
-                                width,
-                            } => (Some(size), width),
-                            _ => return Err(ExpressionError::InvalidArgumentType(fun, 0, arg)),
+                                ..
+                            } => Some(size),
+                            _ => {
+                                return Err(ExpressionError::InvalidArgumentType(fun, 0, arg));
+                            }
                         };
                         let good = match *arg1_ty {
-                            Ti::Pointer { base, space: _ } => module.types[base].inner == *arg_ty,
-                            Ti::ValuePointer {
+                            Ti::Scalar { kind: Sk::Sint, .. } if size0.is_none() => true,
+                            Ti::Vector {
                                 size,
-                                kind: Sk::Float,
-                                width,
-                                space: _,
-                            } => size == size0 && width == width0,
+                                kind: Sk::Sint,
+                                ..
+                            } if Some(size) == size0 => true,
                             _ => false,
                         };
                         if !good {
@@ -1388,7 +1408,7 @@ impl super::Validator {
                 }
                 ShaderStages::all()
             }
-            E::CallResult(function) => other_infos[function.index()].available_stages,
+            E::CallResult(function) => mod_info.functions[function.index()].available_stages,
             E::AtomicResult { ty, comparison } => {
                 let scalar_predicate = |ty: &crate::TypeInner| match ty {
                     &crate::TypeInner::Scalar {

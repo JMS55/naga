@@ -41,6 +41,7 @@
     special_types: (
         ray_desc: None,
         ray_intersection: None,
+        predeclared_types: {},
     ),
     constants: [],
     global_variables: [
@@ -57,6 +58,7 @@
             init: None,
         ),
     ],
+    const_expressions: [],
     functions: [
         (
             name: Some("collatz_iterations"),

@@ -5,20 +5,21 @@ precision highp int;
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
-struct Foo {
-    vec4 a;
-    int b;
-};
+const vec4 v_f32_one = vec4(1.0, 1.0, 1.0, 1.0);
+const vec4 v_f32_zero = vec4(0.0, 0.0, 0.0, 0.0);
+const vec4 v_f32_half = vec4(0.5, 0.5, 0.5, 0.5);
+const ivec4 v_i32_one = ivec4(1, 1, 1, 1);
+
 
 vec4 builtins() {
     int s1_ = (true ? 1 : 0);
-    vec4 s2_ = (true ? vec4(1.0, 1.0, 1.0, 1.0) : vec4(0.0, 0.0, 0.0, 0.0));
-    vec4 s3_ = mix(vec4(1.0, 1.0, 1.0, 1.0), vec4(0.0, 0.0, 0.0, 0.0), bvec4(false, false, false, false));
-    vec4 m1_ = mix(vec4(0.0, 0.0, 0.0, 0.0), vec4(1.0, 1.0, 1.0, 1.0), vec4(0.5, 0.5, 0.5, 0.5));
-    vec4 m2_ = mix(vec4(0.0, 0.0, 0.0, 0.0), vec4(1.0, 1.0, 1.0, 1.0), 0.1);
-    float b1_ = intBitsToFloat(ivec4(1, 1, 1, 1).x);
-    vec4 b2_ = intBitsToFloat(ivec4(1, 1, 1, 1));
-    ivec4 v_i32_zero = ivec4(vec4(0.0, 0.0, 0.0, 0.0));
+    vec4 s2_ = (true ? v_f32_one : v_f32_zero);
+    vec4 s3_ = mix(v_f32_one, v_f32_zero, bvec4(false, false, false, false));
+    vec4 m1_ = mix(v_f32_zero, v_f32_one, v_f32_half);
+    vec4 m2_ = mix(v_f32_zero, v_f32_one, 0.1);
+    float b1_ = intBitsToFloat(v_i32_one.x);
+    vec4 b2_ = intBitsToFloat(v_i32_one);
+    ivec4 v_i32_zero = ivec4(v_f32_zero);
     return (((((vec4((ivec4(s1_) + v_i32_zero)) + s2_) + m1_) + m2_) + vec4(b1_)) + b2_);
 }
 
@@ -44,26 +45,6 @@ vec2 splat_assignment() {
 vec3 bool_cast(vec3 x) {
     bvec3 y = bvec3(x);
     return vec3(y);
-}
-
-float constructors() {
-    Foo foo = Foo(vec4(0.0), 0);
-    foo = Foo(vec4(1.0), 1);
-    mat2x2 m0_ = mat2x2(vec2(1.0, 0.0), vec2(0.0, 1.0));
-    mat4x4 m1_1 = mat4x4(vec4(1.0, 0.0, 0.0, 0.0), vec4(0.0, 1.0, 0.0, 0.0), vec4(0.0, 0.0, 1.0, 0.0), vec4(0.0, 0.0, 0.0, 1.0));
-    uvec2 cit0_ = uvec2(0u);
-    mat2x2 cit1_ = mat2x2(vec2(0.0), vec2(0.0));
-    int cit2_[4] = int[4](0, 1, 2, 3);
-    bool ic0_ = bool(false);
-    int ic1_ = int(0);
-    uint ic2_ = uint(0u);
-    float ic3_ = float(0.0);
-    uvec2 ic4_ = uvec2(uvec2(0u));
-    mat2x3 ic5_ = mat2x3(mat2x3(0.0));
-    uvec2 ic6_ = uvec2(0u);
-    mat2x3 ic7_ = mat2x3(0.0);
-    float _e71 = foo.a.x;
-    return _e71;
 }
 
 void logical() {
@@ -243,15 +224,15 @@ void assignment() {
     a_1 = (_e27 << 2u);
     int _e30 = a_1;
     a_1 = (_e30 >> 1u);
-    int _e32 = a_1;
-    a_1 = (_e32 + 1);
-    int _e35 = a_1;
-    a_1 = (_e35 - 1);
+    int _e33 = a_1;
+    a_1 = (_e33 + 1);
+    int _e36 = a_1;
+    a_1 = (_e36 - 1);
     vec0_ = ivec3(0);
-    int _e42 = vec0_.y;
-    vec0_.y = (_e42 + 1);
-    int _e47 = vec0_.y;
-    vec0_.y = (_e47 - 1);
+    int _e43 = vec0_.y;
+    vec0_.y = (_e43 + 1);
+    int _e48 = vec0_.y;
+    vec0_.y = (_e48 - 1);
     return;
 }
 
@@ -268,8 +249,7 @@ void negation_avoids_prefix_decrement() {
 void main() {
     vec4 _e0 = builtins();
     vec4 _e1 = splat();
-    vec3 _e4 = bool_cast(vec4(1.0, 1.0, 1.0, 1.0).xyz);
-    float _e5 = constructors();
+    vec3 _e4 = bool_cast(v_f32_one.xyz);
     logical();
     arithmetic();
     bit();

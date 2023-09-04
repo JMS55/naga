@@ -1,21 +1,17 @@
-struct Foo {
-    a: vec4<f32>,
-    b: i32,
-}
-
 const v_f32_one: vec4<f32> = vec4<f32>(1.0, 1.0, 1.0, 1.0);
 const v_f32_zero: vec4<f32> = vec4<f32>(0.0, 0.0, 0.0, 0.0);
 const v_f32_half: vec4<f32> = vec4<f32>(0.5, 0.5, 0.5, 0.5);
 const v_i32_one: vec4<i32> = vec4<i32>(1, 1, 1, 1);
+
 fn builtins() -> vec4<f32> {
     let s1_ = select(0, 1, true);
-    let s2_ = select(vec4<f32>(0.0, 0.0, 0.0, 0.0), vec4<f32>(1.0, 1.0, 1.0, 1.0), true);
-    let s3_ = select(vec4<f32>(1.0, 1.0, 1.0, 1.0), vec4<f32>(0.0, 0.0, 0.0, 0.0), vec4<bool>(false, false, false, false));
-    let m1_ = mix(vec4<f32>(0.0, 0.0, 0.0, 0.0), vec4<f32>(1.0, 1.0, 1.0, 1.0), vec4<f32>(0.5, 0.5, 0.5, 0.5));
-    let m2_ = mix(vec4<f32>(0.0, 0.0, 0.0, 0.0), vec4<f32>(1.0, 1.0, 1.0, 1.0), 0.1);
-    let b1_ = bitcast<f32>(vec4<i32>(1, 1, 1, 1).x);
-    let b2_ = bitcast<vec4<f32>>(vec4<i32>(1, 1, 1, 1));
-    let v_i32_zero = vec4<i32>(vec4<f32>(0.0, 0.0, 0.0, 0.0));
+    let s2_ = select(v_f32_zero, v_f32_one, true);
+    let s3_ = select(v_f32_one, v_f32_zero, vec4<bool>(false, false, false, false));
+    let m1_ = mix(v_f32_zero, v_f32_one, v_f32_half);
+    let m2_ = mix(v_f32_zero, v_f32_one, 0.1);
+    let b1_ = bitcast<f32>(v_i32_one.x);
+    let b2_ = bitcast<vec4<f32>>(v_i32_one);
+    let v_i32_zero = vec4<i32>(v_f32_zero);
     return (((((vec4<f32>((vec4<i32>(s1_) + v_i32_zero)) + s2_) + m1_) + m2_) + vec4<f32>(b1_)) + b2_);
 }
 
@@ -42,27 +38,6 @@ fn splat_assignment() -> vec2<f32> {
 fn bool_cast(x: vec3<f32>) -> vec3<f32> {
     let y = vec3<bool>(x);
     return vec3<f32>(y);
-}
-
-fn constructors() -> f32 {
-    var foo: Foo;
-
-    foo = Foo(vec4<f32>(1.0), 1);
-    let m0_ = mat2x2<f32>(vec2<f32>(1.0, 0.0), vec2<f32>(0.0, 1.0));
-    let m1_1 = mat4x4<f32>(vec4<f32>(1.0, 0.0, 0.0, 0.0), vec4<f32>(0.0, 1.0, 0.0, 0.0), vec4<f32>(0.0, 0.0, 1.0, 0.0), vec4<f32>(0.0, 0.0, 0.0, 1.0));
-    let cit0_ = vec2<u32>(0u);
-    let cit1_ = mat2x2<f32>(vec2<f32>(0.0), vec2<f32>(0.0));
-    let cit2_ = array<i32, 4>(0, 1, 2, 3);
-    let ic0_ = bool(bool());
-    let ic1_ = i32(i32());
-    let ic2_ = u32(u32());
-    let ic3_ = f32(f32());
-    let ic4_ = vec2<u32>(vec2<u32>());
-    let ic5_ = mat2x3<f32>(mat2x3<f32>());
-    let ic6_ = bitcast<vec2<u32>>(vec2<u32>());
-    let ic7_ = mat2x3<f32>(mat2x3<f32>());
-    let _e71 = foo.a.x;
-    return _e71;
 }
 
 fn logical() {
@@ -243,15 +218,15 @@ fn assignment() {
     a_1 = (_e27 << 2u);
     let _e30 = a_1;
     a_1 = (_e30 >> 1u);
-    let _e32 = a_1;
-    a_1 = (_e32 + 1);
-    let _e35 = a_1;
-    a_1 = (_e35 - 1);
+    let _e33 = a_1;
+    a_1 = (_e33 + 1);
+    let _e36 = a_1;
+    a_1 = (_e36 - 1);
     vec0_ = vec3<i32>();
-    let _e42 = vec0_.y;
-    vec0_.y = (_e42 + 1);
-    let _e47 = vec0_.y;
-    vec0_.y = (_e47 - 1);
+    let _e43 = vec0_.y;
+    vec0_.y = (_e43 + 1);
+    let _e48 = vec0_.y;
+    vec0_.y = (_e48 - 1);
     return;
 }
 
@@ -269,8 +244,7 @@ fn negation_avoids_prefix_decrement() {
 fn main() {
     let _e0 = builtins();
     let _e1 = splat();
-    let _e4 = bool_cast(vec4<f32>(1.0, 1.0, 1.0, 1.0).xyz);
-    let _e5 = constructors();
+    let _e4 = bool_cast(v_f32_one.xyz);
     logical();
     arithmetic();
     bit();

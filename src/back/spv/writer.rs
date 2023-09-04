@@ -1,9 +1,10 @@
 use super::{
+    block::DebugInfoInner,
     helpers::{contains_builtin, global_needs_wrapper, map_storage_class},
-    make_local, Block, BlockContext, CachedConstant, CachedExpressions, EntryPointContext, Error,
-    Function, FunctionArgument, GlobalVariable, IdGenerator, Instruction, LocalType, LocalVariable,
-    LogicalLayout, LookupFunctionType, LookupType, LoopContext, Options, PhysicalLayout,
-    PipelineOptions, ResultMember, Writer, WriterFlags, BITS_PER_BYTE,
+    make_local, Block, BlockContext, CachedConstant, CachedExpressions, DebugInfo,
+    EntryPointContext, Error, Function, FunctionArgument, GlobalVariable, IdGenerator, Instruction,
+    LocalType, LocalVariable, LogicalLayout, LookupFunctionType, LookupType, LoopContext, Options,
+    PhysicalLayout, PipelineOptions, ResultMember, Writer, WriterFlags, BITS_PER_BYTE,
 };
 use crate::{
     arena::{Handle, UniqueArena},
@@ -329,6 +330,7 @@ impl Writer {
         info: &FunctionInfo,
         ir_module: &crate::Module,
         mut interface: Option<FunctionInterface>,
+        debug_info: &Option<DebugInfoInner>,
     ) -> Result<Word, Error> {
         let mut function = Function::default();
 
@@ -354,7 +356,7 @@ impl Writer {
                     crate::TypeInner::RayQuery => None,
                     _ => {
                         let type_id = self.get_type_id(LookupType::Handle(variable.ty));
-                        Some(self.write_constant_null(type_id))
+                        Some(self.get_constant_null(type_id))
                     }
                 }),
             );
@@ -695,6 +697,7 @@ impl Writer {
             &ir_function.body,
             super::block::BlockExit::Return,
             LoopContext::default(),
+            debug_info.as_ref(),
         )?;
 
         // Consume the `BlockContext`, ending its borrows and letting the
@@ -728,6 +731,7 @@ impl Writer {
         entry_point: &crate::EntryPoint,
         info: &FunctionInfo,
         ir_module: &crate::Module,
+        debug_info: &Option<DebugInfoInner>,
     ) -> Result<Instruction, Error> {
         let mut interface_ids = Vec::new();
         let function_id = self.write_function(
@@ -738,6 +742,7 @@ impl Writer {
                 varying_ids: &mut interface_ids,
                 stage: entry_point.stage,
             }),
+            debug_info,
         )?;
 
         let exec_model = match entry_point.stage {
@@ -1203,11 +1208,51 @@ impl Writer {
             .to_words(&mut self.logical_layout.declarations);
     }
 
+    pub(super) fn get_constant_null(&mut self, type_id: Word) -> Word {
+        let null = CachedConstant::ZeroValue(type_id);
+        if let Some(&id) = self.cached_constants.get(&null) {
+            return id;
+        }
+        let id = self.write_constant_null(type_id);
+        self.cached_constants.insert(null, id);
+        id
+    }
+
     pub(super) fn write_constant_null(&mut self, type_id: Word) -> Word {
         let null_id = self.id_gen.next();
         Instruction::constant_null(type_id, null_id)
             .to_words(&mut self.logical_layout.declarations);
         null_id
+    }
+
+    fn write_constant_expr(
+        &mut self,
+        handle: Handle<crate::Expression>,
+        ir_module: &crate::Module,
+    ) -> Result<Word, Error> {
+        let id = match ir_module.const_expressions[handle] {
+            crate::Expression::Literal(literal) => self.get_constant_scalar(literal),
+            crate::Expression::Constant(constant) => {
+                let constant = &ir_module.constants[constant];
+                self.constant_ids[constant.init.index()]
+            }
+            crate::Expression::ZeroValue(ty) => {
+                let type_id = self.get_type_id(LookupType::Handle(ty));
+                self.get_constant_null(type_id)
+            }
+            crate::Expression::Compose { ty, ref components } => {
+                let component_ids: Vec<_> = components
+                    .iter()
+                    .map(|component| self.constant_ids[component.index()])
+                    .collect();
+                self.get_constant_composite(LookupType::Handle(ty), component_ids.as_slice())
+            }
+            _ => unreachable!(),
+        };
+
+        self.constant_ids[handle.index()] = id;
+
+        Ok(id)
     }
 
     pub(super) fn write_barrier(&mut self, flags: crate::Barrier, block: &mut Block) {
@@ -1256,7 +1301,7 @@ impl Writer {
                 // get wrapped, and we're initializing `WorkGroup` variables.
                 let var_id = self.global_variables[handle.index()].var_id;
                 let var_type_id = self.get_type_id(LookupType::Handle(var.ty));
-                let init_word = self.write_constant_null(var_type_id);
+                let init_word = self.get_constant_null(var_type_id);
                 Instruction::store(var_id, init_word, None)
             })
             .collect::<Vec<_>>();
@@ -1294,7 +1339,7 @@ impl Writer {
             id
         };
 
-        let zero_id = self.write_constant_null(uint3_type_id);
+        let zero_id = self.get_constant_null(uint3_type_id);
         let bool3_type_id = self.get_bool3_type_id();
 
         let eq_id = self.id_gen.next();
@@ -1391,6 +1436,7 @@ impl Writer {
                 location,
                 interpolation,
                 sampling,
+                second_blend_source,
             } => {
                 self.decorate(id, Decoration::Location, &[location]);
 
@@ -1429,6 +1475,9 @@ impl Writer {
                             self.decorate(id, Decoration::Sample, &[]);
                         }
                     }
+                }
+                if second_blend_source {
+                    self.decorate(id, Decoration::Index, &[1]);
                 }
             }
             crate::Binding::BuiltIn(built_in) => {
@@ -1630,7 +1679,7 @@ impl Writer {
         let init_word = match (global_variable.space, self.zero_initialize_workgroup_memory) {
             (crate::AddressSpace::Private, _)
             | (crate::AddressSpace::WorkGroup, super::ZeroInitializeWorkgroupMemoryMode::Native) => {
-                init_word.or_else(|| Some(self.write_constant_null(inner_type_id)))
+                init_word.or_else(|| Some(self.get_constant_null(inner_type_id)))
             }
             _ => init_word,
         };
@@ -1726,6 +1775,7 @@ impl Writer {
         ir_module: &crate::Module,
         mod_info: &ModuleInfo,
         ep_index: Option<usize>,
+        debug_info: &Option<DebugInfo>,
     ) -> Result<(), Error> {
         fn has_view_index_check(
             ir_module: &crate::Module,
@@ -1773,64 +1823,49 @@ impl Writer {
         Instruction::ext_inst_import(self.gl450_ext_inst_id, "GLSL.std.450")
             .to_words(&mut self.logical_layout.ext_inst_imports);
 
+        let mut debug_info_inner = None;
         if self.flags.contains(WriterFlags::DEBUG) {
-            self.debugs
-                .push(Instruction::source(spirv::SourceLanguage::GLSL, 450));
-        }
+            if let Some(debug_info) = debug_info.as_ref() {
+                let source_file_id = self.id_gen.next();
+                self.debugs
+                    .push(Instruction::string(debug_info.file_name, source_file_id));
 
-        self.constant_ids.resize(ir_module.constants.len(), 0);
-        // first, output all the scalar constants
-        for (handle, constant) in ir_module.constants.iter() {
-            match constant.inner {
-                crate::ConstantInner::Composite { .. } => continue,
-                crate::ConstantInner::Scalar { width, ref value } => {
-                    let literal = crate::Literal::from_scalar(*value, width).ok_or(
-                        Error::Validation("Unexpected kind and/or width for Literal"),
-                    )?;
-                    self.constant_ids[handle.index()] = match constant.name {
-                        Some(ref name) => {
-                            let id = self.id_gen.next();
-                            self.write_constant_scalar(id, &literal, Some(name));
-                            id
-                        }
-                        None => self.get_constant_scalar(literal),
-                    };
-                }
+                debug_info_inner = Some(DebugInfoInner {
+                    source_code: debug_info.source_code,
+                    source_file_id,
+                });
+                self.debugs.push(Instruction::source(
+                    spirv::SourceLanguage::Unknown,
+                    0,
+                    &debug_info_inner,
+                ));
             }
         }
 
-        // then all types, some of them may rely on constants and struct type set
+        // write all types
         for (handle, _) in ir_module.types.iter() {
             self.write_type_declaration_arena(&ir_module.types, handle)?;
         }
 
-        // then all the composite constants, they rely on types
-        for (handle, constant) in ir_module.constants.iter() {
-            match constant.inner {
-                crate::ConstantInner::Scalar { .. } => continue,
-                crate::ConstantInner::Composite { ty, ref components } => {
-                    let ty = LookupType::Handle(ty);
+        // write all const-expressions as constants
+        self.constant_ids
+            .resize(ir_module.const_expressions.len(), 0);
+        for (handle, _) in ir_module.const_expressions.iter() {
+            self.write_constant_expr(handle, ir_module)?;
+        }
+        debug_assert!(self.constant_ids.iter().all(|&id| id != 0));
 
-                    let mut constituent_ids = Vec::with_capacity(components.len());
-                    for constituent in components.iter() {
-                        let constituent_id = self.constant_ids[constituent.index()];
-                        constituent_ids.push(constituent_id);
-                    }
-
-                    self.constant_ids[handle.index()] = match constant.name {
-                        Some(ref name) => {
-                            let id = self.id_gen.next();
-                            self.write_constant_composite(id, ty, &constituent_ids, Some(name));
-                            id
-                        }
-                        None => self.get_constant_composite(ty, &constituent_ids),
-                    };
+        // write the name of constants on their respective const-expression initializer
+        if self.flags.contains(WriterFlags::DEBUG) {
+            for (_, constant) in ir_module.constants.iter() {
+                if let Some(ref name) = constant.name {
+                    let id = self.constant_ids[constant.init.index()];
+                    self.debugs.push(Instruction::name(id, name));
                 }
             }
         }
-        debug_assert_eq!(self.constant_ids.iter().position(|&id| id == 0), None);
 
-        // now write all globals
+        // write all global variables
         for (handle, var) in ir_module.global_variables.iter() {
             // If a single entry point was specified, only write `OpVariable` instructions
             // for the globals it actually uses. Emit dummies for the others,
@@ -1847,7 +1882,7 @@ impl Writer {
             self.global_variables.push(gvar);
         }
 
-        // all functions
+        // write all functions
         for (handle, ir_function) in ir_module.functions.iter() {
             let info = &mod_info[handle];
             if let Some(index) = ep_index {
@@ -1860,17 +1895,18 @@ impl Writer {
                     continue;
                 }
             }
-            let id = self.write_function(ir_function, info, ir_module, None)?;
+            let id = self.write_function(ir_function, info, ir_module, None, &debug_info_inner)?;
             self.lookup_function.insert(handle, id);
         }
 
-        // and entry points
+        // write all or one entry points
         for (index, ir_ep) in ir_module.entry_points.iter().enumerate() {
             if ep_index.is_some() && ep_index != Some(index) {
                 continue;
             }
             let info = mod_info.get_entry_point(index);
-            let ep_instruction = self.write_entry_point(ir_ep, info, ir_module)?;
+            let ep_instruction =
+                self.write_entry_point(ir_ep, info, ir_module, &debug_info_inner)?;
             ep_instruction.to_words(&mut self.logical_layout.entry_points);
         }
 
@@ -1912,6 +1948,7 @@ impl Writer {
         ir_module: &crate::Module,
         info: &ModuleInfo,
         pipeline_options: Option<&PipelineOptions>,
+        debug_info: &Option<DebugInfo>,
         words: &mut Vec<Word>,
     ) -> Result<(), Error> {
         self.reset();
@@ -1929,7 +1966,7 @@ impl Writer {
             None => None,
         };
 
-        self.write_logical_layout(ir_module, info, ep_index)?;
+        self.write_logical_layout(ir_module, info, ep_index, debug_info)?;
         self.write_physical_layout();
 
         self.physical_layout.in_words(words);

@@ -148,18 +148,6 @@ impl Clone for TypeResolution {
     }
 }
 
-impl crate::ConstantInner {
-    pub const fn resolve_type(&self) -> TypeResolution {
-        match *self {
-            Self::Scalar { width, ref value } => TypeResolution::Value(crate::TypeInner::Scalar {
-                kind: value.scalar_kind(),
-                width,
-            }),
-            Self::Composite { ty, components: _ } => TypeResolution::Handle(ty),
-        }
-    }
-}
-
 #[derive(Clone, Debug, Error, PartialEq)]
 pub enum ResolveError {
     #[error("Index {index} is out of bounds for expression {expr:?}")]
@@ -421,17 +409,6 @@ impl<'a> ResolveContext<'a> {
                     }
                 }
             }
-            crate::Expression::Literal(lit) => TypeResolution::Value(lit.ty_inner()),
-            crate::Expression::Constant(h) => match self.constants[h].inner {
-                crate::ConstantInner::Scalar { width, ref value } => {
-                    TypeResolution::Value(Ti::Scalar {
-                        kind: value.scalar_kind(),
-                        width,
-                    })
-                }
-                crate::ConstantInner::Composite { ty, components: _ } => TypeResolution::Handle(ty),
-            },
-            crate::Expression::ZeroValue(ty) => TypeResolution::Handle(ty),
             crate::Expression::Splat { size, value } => match *past(value)?.inner_with(types) {
                 Ti::Scalar { kind, width } => {
                     TypeResolution::Value(Ti::Vector { size, kind, width })
@@ -456,6 +433,9 @@ impl<'a> ResolveContext<'a> {
                     return Err(ResolveError::InvalidVector(vector));
                 }
             },
+            crate::Expression::Literal(lit) => TypeResolution::Value(lit.ty_inner()),
+            crate::Expression::Constant(h) => TypeResolution::Handle(self.constants[h].ty),
+            crate::Expression::ZeroValue(ty) => TypeResolution::Handle(ty),
             crate::Expression::Compose { ty, .. } => TypeResolution::Handle(ty),
             crate::Expression::FunctionArgument(index) => {
                 let arg = self
@@ -726,8 +706,6 @@ impl<'a> ResolveContext<'a> {
                     Mf::Round |
                     Mf::Fract |
                     Mf::Trunc |
-                    Mf::Modf |
-                    Mf::Frexp |
                     Mf::Ldexp |
                     // exponent
                     Mf::Exp |
@@ -735,6 +713,31 @@ impl<'a> ResolveContext<'a> {
                     Mf::Log |
                     Mf::Log2 |
                     Mf::Pow => res_arg.clone(),
+                    Mf::Modf | Mf::Frexp => {
+                        let (size, width) = match res_arg.inner_with(types) {
+                            &Ti::Scalar {
+                                kind: crate::ScalarKind::Float,
+                               width,
+                            } => (None, width),
+                            &Ti::Vector {
+                                kind: crate::ScalarKind::Float,
+                                size,
+                                width,
+                            } => (Some(size), width),
+                            ref other =>
+                                return Err(ResolveError::IncompatibleOperands(format!("{fun:?}({other:?}, _)")))
+                        };
+                        let result = self
+                        .special_types
+                        .predeclared_types
+                        .get(&if fun == Mf::Modf {
+                            crate::PredeclaredType::ModfResult { size, width }
+                    } else {
+                            crate::PredeclaredType::FrexpResult { size, width }
+                    })
+                        .ok_or(ResolveError::MissingSpecialType)?;
+                        TypeResolution::Handle(*result)
+                    },
                     // geometry
                     Mf::Dot => match *res_arg.inner_with(types) {
                         Ti::Vector {

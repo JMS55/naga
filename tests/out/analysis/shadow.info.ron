@@ -143,58 +143,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -203,10 +152,7 @@
                     ),
                     ref_count: 2,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -215,10 +161,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -227,10 +170,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -239,10 +179,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -251,10 +188,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -263,10 +197,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -275,10 +206,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -287,10 +215,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Uint,
-                        width: 4,
-                    )),
+                    ty: Handle(3),
                 ),
                 (
                     uniformity: (
@@ -299,10 +224,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -311,10 +233,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -323,10 +242,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -335,10 +251,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -347,10 +260,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -359,10 +269,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -371,10 +278,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -383,10 +287,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -395,10 +296,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -407,10 +305,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -419,10 +314,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Uint,
-                        width: 4,
-                    )),
+                    ty: Handle(3),
                 ),
                 (
                     uniformity: (
@@ -431,10 +323,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Uint,
-                        width: 4,
-                    )),
+                    ty: Handle(3),
                 ),
                 (
                     uniformity: (
@@ -443,10 +332,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -455,10 +341,7 @@
                     ),
                     ref_count: 3,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -467,10 +350,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -479,10 +359,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -491,10 +368,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -503,10 +377,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -515,10 +386,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -527,10 +395,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -539,10 +404,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -551,10 +413,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -563,10 +422,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -575,10 +431,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -596,14 +449,11 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(43),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -612,7 +462,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 6,
@@ -621,7 +471,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -633,7 +483,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -645,7 +495,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -657,7 +507,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -669,7 +519,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -687,7 +537,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -696,7 +546,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -708,19 +558,16 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -742,7 +589,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 2,
@@ -751,7 +598,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -763,7 +610,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -775,7 +622,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(43),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -787,7 +634,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(43),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -799,7 +646,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 3,
@@ -808,7 +655,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -820,7 +667,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -832,7 +679,25 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(1),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(1),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -844,7 +709,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -856,31 +721,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -889,7 +730,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -901,7 +742,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -925,6 +766,7 @@
                 ),
             ],
             sampling: [],
+            dual_source_blending: false,
         ),
         (
             flags: ("EXPRESSIONS | BLOCKS | CONTROL_FLOW_UNIFORMITY | STRUCT_LAYOUTS | CONSTANTS | BINDINGS"),
@@ -1037,10 +879,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1049,58 +888,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 0,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -1109,10 +897,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1121,10 +906,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1133,10 +915,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1145,10 +924,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1157,10 +933,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1169,10 +942,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1181,10 +951,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Uint,
-                        width: 4,
-                    )),
+                    ty: Handle(3),
                 ),
                 (
                     uniformity: (
@@ -1193,10 +960,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1205,10 +969,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -1217,10 +978,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1229,10 +987,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1241,10 +996,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -1253,10 +1005,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1265,10 +1014,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1277,10 +1023,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1289,10 +1032,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1301,10 +1041,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1313,10 +1050,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Uint,
-                        width: 4,
-                    )),
+                    ty: Handle(3),
                 ),
                 (
                     uniformity: (
@@ -1325,10 +1059,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Uint,
-                        width: 4,
-                    )),
+                    ty: Handle(3),
                 ),
                 (
                     uniformity: (
@@ -1337,10 +1068,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -1349,10 +1077,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -1361,10 +1086,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1373,10 +1095,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1385,10 +1104,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1397,10 +1113,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1409,10 +1122,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1421,10 +1131,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1433,10 +1140,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1445,10 +1149,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1457,10 +1158,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1469,10 +1167,7 @@
                     ),
                     ref_count: 0,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Sint,
-                        width: 4,
-                    )),
+                    ty: Handle(9),
                 ),
                 (
                     uniformity: (
@@ -1490,14 +1185,11 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(43),
                         requirements: (""),
                     ),
                     ref_count: 3,
@@ -1509,7 +1201,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 11,
@@ -1521,7 +1213,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1580,7 +1272,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1592,7 +1284,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(43),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1601,7 +1293,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1624,7 +1316,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1633,7 +1325,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1647,7 +1339,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1661,7 +1353,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1679,7 +1371,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1733,7 +1425,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1742,7 +1434,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1756,7 +1448,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1770,7 +1462,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1786,7 +1478,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1812,7 +1504,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1821,7 +1513,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1835,7 +1527,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1849,7 +1541,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1865,7 +1557,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1891,7 +1583,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1900,7 +1592,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1914,7 +1606,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1928,7 +1620,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1944,7 +1636,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -1956,7 +1648,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2052,7 +1744,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2061,7 +1753,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2087,10 +1779,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -2099,10 +1788,7 @@
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
+                    ty: Handle(1),
                 ),
                 (
                     uniformity: (
@@ -2120,7 +1806,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2129,7 +1815,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2143,7 +1829,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2157,7 +1843,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2173,86 +1859,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Value(Scalar(
-                        kind: Float,
-                        width: 4,
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: None,
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: Some(4),
-                    ty: Value(Pointer(
-                        base: 19,
-                        space: Storage(
-                            access: ("LOAD"),
-                        ),
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Handle(3),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: Some(4),
-                    ty: Value(Pointer(
-                        base: 18,
-                        space: Storage(
-                            access: ("LOAD"),
-                        ),
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: Some(4),
-                    ty: Value(Pointer(
-                        base: 4,
-                        space: Storage(
-                            access: ("LOAD"),
-                        ),
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: Some(4),
-                    ty: Value(ValuePointer(
-                        size: None,
-                        kind: Float,
-                        width: 4,
-                        space: Storage(
-                            access: ("LOAD"),
-                        ),
-                    )),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2278,7 +1885,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2287,7 +1894,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2301,7 +1908,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2315,7 +1922,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2331,7 +1938,7 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2343,34 +1950,21 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: None,
                         requirements: (""),
                     ),
                     ref_count: 1,
-                    assignable_global: None,
-                    ty: Handle(2),
+                    assignable_global: Some(4),
+                    ty: Value(Pointer(
+                        base: 19,
+                        space: Storage(
+                            access: ("LOAD"),
+                        ),
+                    )),
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Handle(2),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(47),
-                        requirements: (""),
-                    ),
-                    ref_count: 1,
-                    assignable_global: None,
-                    ty: Handle(2),
-                ),
-                (
-                    uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2379,16 +1973,63 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(48),
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: Some(4),
+                    ty: Value(Pointer(
+                        base: 18,
+                        space: Storage(
+                            access: ("LOAD"),
+                        ),
+                    )),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: Some(4),
+                    ty: Value(Pointer(
+                        base: 4,
+                        space: Storage(
+                            access: ("LOAD"),
+                        ),
+                    )),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: Some(4),
+                    ty: Value(ValuePointer(
+                        size: None,
+                        kind: Float,
+                        width: 4,
+                        space: Storage(
+                            access: ("LOAD"),
+                        ),
+                    )),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
                     assignable_global: None,
-                    ty: Handle(3),
+                    ty: Value(Scalar(
+                        kind: Float,
+                        width: 4,
+                    )),
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(44),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2397,7 +2038,52 @@
                 ),
                 (
                     uniformity: (
-                        non_uniform_result: Some(47),
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(2),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(43),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(2),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(3),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(44),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(3),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(43),
+                        requirements: (""),
+                    ),
+                    ref_count: 1,
+                    assignable_global: None,
+                    ty: Handle(2),
+                ),
+                (
+                    uniformity: (
+                        non_uniform_result: Some(43),
                         requirements: (""),
                     ),
                     ref_count: 1,
@@ -2406,6 +2092,7 @@
                 ),
             ],
             sampling: [],
+            dual_source_blending: false,
         ),
     ],
     entry_points: [
@@ -2498,6 +2185,151 @@
                 ),
             ],
             sampling: [],
+            dual_source_blending: false,
         ),
+    ],
+    const_expression_types: [
+        Value(Scalar(
+            kind: Float,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Float,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Float,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Float,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Float,
+            width: 4,
+        )),
+        Handle(1),
+        Handle(1),
+        Handle(1),
+        Handle(2),
+        Value(Scalar(
+            kind: Uint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Uint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Uint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Float,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Value(Scalar(
+            kind: Sint,
+            width: 4,
+        )),
+        Handle(2),
+        Handle(3),
     ],
 )

@@ -1,13 +1,3 @@
-struct gen___atomic_compare_exchange_resultSint4_ {
-    old_value: i32,
-    exchanged: bool,
-}
-
-struct gen___atomic_compare_exchange_resultUint4_ {
-    old_value: u32,
-    exchanged: bool,
-}
-
 const SIZE: u32 = 128u;
 
 @group(0) @binding(0) 
@@ -51,8 +41,8 @@ fn test_atomic_compare_exchange_i32_() {
             }
         }
         continuing {
-            let _e26 = i;
-            i = (_e26 + 1u);
+            let _e27 = i;
+            i = (_e27 + 1u);
         }
     }
     return;
@@ -94,8 +84,8 @@ fn test_atomic_compare_exchange_u32_() {
             }
         }
         continuing {
-            let _e26 = i_1;
-            i_1 = (_e26 + 1u);
+            let _e27 = i_1;
+            i_1 = (_e27 + 1u);
         }
     }
     return;

@@ -7,10 +7,9 @@ use super::{
     Error, ErrorKind, Frontend, Result,
 };
 use crate::{
-    BinaryOperator, Block, Constant, DerivativeAxis as Axis, DerivativeControl as Ctrl, Expression,
-    Handle, ImageClass, ImageDimension as Dim, ImageQuery, MathFunction, Module,
-    RelationalFunction, SampleLevel, ScalarKind as Sk, Span, Type, TypeInner, UnaryOperator,
-    VectorSize,
+    BinaryOperator, Block, DerivativeAxis as Axis, DerivativeControl as Ctrl, Expression, Handle,
+    ImageClass, ImageDimension as Dim, ImageQuery, MathFunction, Module, RelationalFunction,
+    SampleLevel, ScalarKind as Sk, Span, Type, TypeInner, UnaryOperator, VectorSize,
 };
 
 impl crate::ScalarKind {
@@ -1281,14 +1280,14 @@ fn inject_common_builtin(
                     0b10 => Some(VectorSize::Tri),
                     _ => Some(VectorSize::Quad),
                 };
-                let ty = || match size {
+                let ty = |kind| match size {
                     Some(size) => TypeInner::Vector {
                         size,
-                        kind: Sk::Float,
+                        kind,
                         width: float_width,
                     },
                     None => TypeInner::Scalar {
-                        kind: Sk::Float,
+                        kind,
                         width: float_width,
                     },
                 };
@@ -1301,9 +1300,15 @@ fn inject_common_builtin(
                     _ => unreachable!(),
                 };
 
+                let second_kind = if fun == MacroCall::MathFunction(MathFunction::Ldexp) {
+                    Sk::Sint
+                } else {
+                    Sk::Float
+                };
+
                 declaration
                     .overloads
-                    .push(module.add_builtin(vec![ty(), ty()], fun))
+                    .push(module.add_builtin(vec![ty(Sk::Float), ty(second_kind)], fun))
             }
         }
         "transpose" => {
@@ -2183,7 +2188,7 @@ fn texture_call(
     image: Handle<Expression>,
     level: SampleLevel,
     comps: CoordComponents,
-    offset: Option<Handle<Constant>>,
+    offset: Option<Handle<Expression>>,
     body: &mut Block,
     meta: Span,
 ) -> Result<Handle<Expression>> {
