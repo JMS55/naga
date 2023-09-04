@@ -1,16 +1,16 @@
 struct Struct {
     atomic_scalar: atomic<u32>,
-    atomic_arr: array<atomic<i32>,2>,
+    atomic_arr: array<atomic<i32>, 2>,
 }
 
 @group(0) @binding(0) 
 var<storage, read_write> storage_atomic_scalar: atomic<u32>;
 @group(0) @binding(1) 
-var<storage, read_write> storage_atomic_arr: array<atomic<i32>,2>;
+var<storage, read_write> storage_atomic_arr: array<atomic<i32>, 2>;
 @group(0) @binding(2) 
 var<storage, read_write> storage_struct: Struct;
 var<workgroup> workgroup_atomic_scalar: atomic<u32>;
-var<workgroup> workgroup_atomic_arr: array<atomic<i32>,2>;
+var<workgroup> workgroup_atomic_arr: array<atomic<i32>, 2>;
 var<workgroup> workgroup_struct: Struct;
 
 @compute @workgroup_size(2, 1, 1) 
@@ -24,14 +24,14 @@ fn cs_main(@builtin(local_invocation_id) id: vec3<u32>) {
     atomicStore((&workgroup_struct.atomic_scalar), 1u);
     atomicStore((&workgroup_struct.atomic_arr[1]), 1);
     workgroupBarrier();
-    _ = atomicLoad((&storage_atomic_scalar));
-    _ = atomicLoad((&storage_atomic_arr[1]));
-    _ = atomicLoad((&storage_struct.atomic_scalar));
-    _ = atomicLoad((&storage_struct.atomic_arr[1]));
-    _ = atomicLoad((&workgroup_atomic_scalar));
-    _ = atomicLoad((&workgroup_atomic_arr[1]));
-    _ = atomicLoad((&workgroup_struct.atomic_scalar));
-    _ = atomicLoad((&workgroup_struct.atomic_arr[1]));
+    let l0_ = atomicLoad((&storage_atomic_scalar));
+    let l1_ = atomicLoad((&storage_atomic_arr[1]));
+    let l2_ = atomicLoad((&storage_struct.atomic_scalar));
+    let l3_ = atomicLoad((&storage_struct.atomic_arr[1]));
+    let l4_ = atomicLoad((&workgroup_atomic_scalar));
+    let l5_ = atomicLoad((&workgroup_atomic_arr[1]));
+    let l6_ = atomicLoad((&workgroup_struct.atomic_scalar));
+    let l7_ = atomicLoad((&workgroup_struct.atomic_arr[1]));
     workgroupBarrier();
     let _e59 = atomicAdd((&storage_atomic_scalar), 1u);
     let _e64 = atomicAdd((&storage_atomic_arr[1]), 1);

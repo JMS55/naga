@@ -47,7 +47,7 @@ impl Writer {
         }
         let raw_version = ((major as u32) << 16) | ((minor as u32) << 8);
 
-        let mut capabilities_used = crate::FastHashSet::default();
+        let mut capabilities_used = crate::FastIndexSet::default();
         capabilities_used.insert(spirv::Capability::Shader);
 
         let mut id_gen = IdGenerator::default();
@@ -60,7 +60,7 @@ impl Writer {
             id_gen,
             capabilities_available: options.capabilities.clone(),
             capabilities_used,
-            extensions_used: crate::FastHashSet::default(),
+            extensions_used: crate::FastIndexSet::default(),
             debugs: vec![],
             annotations: vec![],
             flags: options.flags,
@@ -540,8 +540,7 @@ impl Writer {
                         );
                         iface.varying_ids.push(varying_id);
 
-                        let default_value_id =
-                            self.get_constant_scalar(crate::ScalarValue::Float(1.0), 4);
+                        let default_value_id = self.get_constant_scalar(crate::Literal::F32(1.0));
                         prelude
                             .body
                             .push(Instruction::store(varying_id, default_value_id, None));
@@ -598,36 +597,38 @@ impl Writer {
             // Handle globals are pre-emitted and should be loaded automatically.
             //
             // Any that are binding arrays we skip as we cannot load the array, we must load the result after indexing.
-            let is_binding_array = match ir_module.types[var.ty].inner {
-                crate::TypeInner::BindingArray { .. } => true,
-                _ => false,
-            };
-
-            if var.space == crate::AddressSpace::Handle && !is_binding_array {
-                let var_type_id = self.get_type_id(LookupType::Handle(var.ty));
-                let id = self.id_gen.next();
-                prelude
-                    .body
-                    .push(Instruction::load(var_type_id, id, gv.var_id, None));
-                gv.access_id = gv.var_id;
-                gv.handle_id = id;
-            } else if global_needs_wrapper(ir_module, var) {
-                let class = map_storage_class(var.space);
-                let pointer_type_id = self.get_pointer_id(&ir_module.types, var.ty, class)?;
-                let index_id = self.get_index_constant(0);
-
-                let id = self.id_gen.next();
-                prelude.body.push(Instruction::access_chain(
-                    pointer_type_id,
-                    id,
-                    gv.var_id,
-                    &[index_id],
-                ));
-                gv.access_id = id;
-            } else {
-                // by default, the variable ID is accessed as is
-                gv.access_id = gv.var_id;
-            };
+            match ir_module.types[var.ty].inner {
+                crate::TypeInner::BindingArray { .. } => {
+                    gv.access_id = gv.var_id;
+                }
+                _ => {
+                    if var.space == crate::AddressSpace::Handle {
+                        let var_type_id = self.get_type_id(LookupType::Handle(var.ty));
+                        let id = self.id_gen.next();
+                        prelude
+                            .body
+                            .push(Instruction::load(var_type_id, id, gv.var_id, None));
+                        gv.access_id = gv.var_id;
+                        gv.handle_id = id;
+                    } else if global_needs_wrapper(ir_module, var) {
+                        let class = map_storage_class(var.space);
+                        let pointer_type_id =
+                            self.get_pointer_id(&ir_module.types, var.ty, class)?;
+                        let index_id = self.get_index_constant(0);
+                        let id = self.id_gen.next();
+                        prelude.body.push(Instruction::access_chain(
+                            pointer_type_id,
+                            id,
+                            gv.var_id,
+                            &[index_id],
+                        ));
+                        gv.access_id = id;
+                    } else {
+                        // by default, the variable ID is accessed as is
+                        gv.access_id = gv.var_id;
+                    };
+                }
+            }
 
             // work around borrow checking in the presence of `self.xxx()` calls
             self.global_variables[handle.index()] = gv;
@@ -937,7 +938,7 @@ impl Writer {
             }
             LocalType::BindingArray { base, size } => {
                 let inner_ty = self.get_type_id(LookupType::Handle(base));
-                let scalar_id = self.get_constant_scalar(crate::ScalarValue::Uint(size), 4);
+                let scalar_id = self.get_constant_scalar(crate::Literal::U32(size));
                 Instruction::type_array(id, inner_ty, scalar_id)
             }
             LocalType::PointerToBindingArray { base, size, space } => {
@@ -991,8 +992,8 @@ impl Writer {
 
                     let type_id = self.get_type_id(LookupType::Handle(base));
                     match size {
-                        crate::ArraySize::Constant(const_handle) => {
-                            let length_id = self.constant_ids[const_handle.index()];
+                        crate::ArraySize::Constant(length) => {
+                            let length_id = self.get_index_constant(length.get());
                             Instruction::type_array(id, type_id, length_id)
                         }
                         crate::ArraySize::Dynamic => Instruction::type_runtime_array(id, type_id),
@@ -1001,8 +1002,8 @@ impl Writer {
                 crate::TypeInner::BindingArray { base, size } => {
                     let type_id = self.get_type_id(LookupType::Handle(base));
                     match size {
-                        crate::ArraySize::Constant(const_handle) => {
-                            let length_id = self.constant_ids[const_handle.index()];
+                        crate::ArraySize::Constant(length) => {
+                            let length_id = self.get_index_constant(length.get());
                             Instruction::type_array(id, type_id, length_id)
                         }
                         crate::ArraySize::Dynamic => Instruction::type_runtime_array(id, type_id),
@@ -1108,20 +1109,29 @@ impl Writer {
     }
 
     pub(super) fn get_index_constant(&mut self, index: Word) -> Word {
-        self.get_constant_scalar(crate::ScalarValue::Uint(index as _), 4)
+        self.get_constant_scalar(crate::Literal::U32(index))
     }
 
-    pub(super) fn get_constant_scalar(
+    pub(super) fn get_constant_scalar_with(
         &mut self,
-        value: crate::ScalarValue,
+        value: u8,
+        kind: crate::ScalarKind,
         width: crate::Bytes,
-    ) -> Word {
-        let scalar = CachedConstant::Scalar { value, width };
+    ) -> Result<Word, Error> {
+        Ok(
+            self.get_constant_scalar(crate::Literal::new(value, kind, width).ok_or(
+                Error::Validation("Unexpected kind and/or width for Literal"),
+            )?),
+        )
+    }
+
+    pub(super) fn get_constant_scalar(&mut self, value: crate::Literal) -> Word {
+        let scalar = CachedConstant::Literal(value);
         if let Some(&id) = self.cached_constants.get(&scalar) {
             return id;
         }
         let id = self.id_gen.next();
-        self.write_constant_scalar(id, &value, width, None);
+        self.write_constant_scalar(id, &value, None);
         self.cached_constants.insert(scalar, id);
         id
     }
@@ -1129,8 +1139,7 @@ impl Writer {
     fn write_constant_scalar(
         &mut self,
         id: Word,
-        value: &crate::ScalarValue,
-        width: crate::Bytes,
+        value: &crate::Literal,
         debug_name: Option<&String>,
     ) {
         if self.flags.contains(WriterFlags::DEBUG) {
@@ -1141,56 +1150,19 @@ impl Writer {
         let type_id = self.get_type_id(LookupType::Local(LocalType::Value {
             vector_size: None,
             kind: value.scalar_kind(),
-            width,
+            width: value.width(),
             pointer_space: None,
         }));
-        let (solo, pair);
         let instruction = match *value {
-            crate::ScalarValue::Sint(val) => {
-                let words = match width {
-                    4 => {
-                        solo = [val as u32];
-                        &solo[..]
-                    }
-                    8 => {
-                        pair = [val as u32, (val >> 32) as u32];
-                        &pair
-                    }
-                    _ => unreachable!(),
-                };
-                Instruction::constant(type_id, id, words)
+            crate::Literal::F64(value) => {
+                let bits = value.to_bits();
+                Instruction::constant_64bit(type_id, id, bits as u32, (bits >> 32) as u32)
             }
-            crate::ScalarValue::Uint(val) => {
-                let words = match width {
-                    4 => {
-                        solo = [val as u32];
-                        &solo[..]
-                    }
-                    8 => {
-                        pair = [val as u32, (val >> 32) as u32];
-                        &pair
-                    }
-                    _ => unreachable!(),
-                };
-                Instruction::constant(type_id, id, words)
-            }
-            crate::ScalarValue::Float(val) => {
-                let words = match width {
-                    4 => {
-                        solo = [(val as f32).to_bits()];
-                        &solo[..]
-                    }
-                    8 => {
-                        let bits = f64::to_bits(val);
-                        pair = [bits as u32, (bits >> 32) as u32];
-                        &pair
-                    }
-                    _ => unreachable!(),
-                };
-                Instruction::constant(type_id, id, words)
-            }
-            crate::ScalarValue::Bool(true) => Instruction::constant_true(type_id, id),
-            crate::ScalarValue::Bool(false) => Instruction::constant_false(type_id, id),
+            crate::Literal::F32(value) => Instruction::constant_32bit(type_id, id, value.to_bits()),
+            crate::Literal::U32(value) => Instruction::constant_32bit(type_id, id, value),
+            crate::Literal::I32(value) => Instruction::constant_32bit(type_id, id, value as u32),
+            crate::Literal::Bool(true) => Instruction::constant_true(type_id, id),
+            crate::Literal::Bool(false) => Instruction::constant_false(type_id, id),
         };
 
         instruction.to_words(&mut self.logical_layout.declarations);
@@ -1598,7 +1570,7 @@ impl Writer {
                     substitute_inner_type_lookup =
                         Some(LookupType::Local(LocalType::PointerToBindingArray {
                             base,
-                            size: remapped_binding_array_size as u64,
+                            size: remapped_binding_array_size,
                             space: global_variable.space,
                         }))
                 }
@@ -1812,13 +1784,16 @@ impl Writer {
             match constant.inner {
                 crate::ConstantInner::Composite { .. } => continue,
                 crate::ConstantInner::Scalar { width, ref value } => {
+                    let literal = crate::Literal::from_scalar(*value, width).ok_or(
+                        Error::Validation("Unexpected kind and/or width for Literal"),
+                    )?;
                     self.constant_ids[handle.index()] = match constant.name {
                         Some(ref name) => {
                             let id = self.id_gen.next();
-                            self.write_constant_scalar(id, value, width, Some(name));
+                            self.write_constant_scalar(id, &literal, Some(name));
                             id
                         }
-                        None => self.get_constant_scalar(*value, width),
+                        None => self.get_constant_scalar(literal),
                     };
                 }
             }
@@ -1963,7 +1938,7 @@ impl Writer {
     }
 
     /// Return the set of capabilities the last module written used.
-    pub const fn get_capabilities_used(&self) -> &crate::FastHashSet<spirv::Capability> {
+    pub const fn get_capabilities_used(&self) -> &crate::FastIndexSet<spirv::Capability> {
         &self.capabilities_used
     }
 

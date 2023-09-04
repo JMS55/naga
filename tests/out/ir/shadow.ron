@@ -50,8 +50,7 @@
             inner: Image(
                 dim: D2,
                 arrayed: true,
-                class: Sampled(
-                    kind: Float,
+                class: Depth(
                     multi: false,
                 ),
             ),
@@ -187,9 +186,7 @@
             inner: Pointer(
                 base: 20,
                 space: Storage(
-                    access: (
-                        bits: 0,
-                    ),
+                    access: (""),
                 ),
             ),
         ),
@@ -198,9 +195,7 @@
             inner: Pointer(
                 base: 19,
                 space: Storage(
-                    access: (
-                        bits: 3,
-                    ),
+                    access: ("LOAD | STORE"),
                 ),
             ),
         ),
@@ -209,9 +204,7 @@
             inner: Pointer(
                 base: 18,
                 space: Storage(
-                    access: (
-                        bits: 3,
-                    ),
+                    access: ("LOAD | STORE"),
                 ),
             ),
         ),
@@ -220,9 +213,7 @@
             inner: Pointer(
                 base: 17,
                 space: Storage(
-                    access: (
-                        bits: 3,
-                    ),
+                    access: ("LOAD | STORE"),
                 ),
             ),
         ),
@@ -245,9 +236,7 @@
             inner: Pointer(
                 base: 4,
                 space: Storage(
-                    access: (
-                        bits: 3,
-                    ),
+                    access: ("LOAD | STORE"),
                 ),
             ),
         ),
@@ -256,9 +245,7 @@
             inner: Pointer(
                 base: 1,
                 space: Storage(
-                    access: (
-                        bits: 3,
-                    ),
+                    access: ("LOAD | STORE"),
                 ),
             ),
         ),
@@ -267,16 +254,6 @@
             inner: Pointer(
                 base: 1,
                 space: Private,
-            ),
-        ),
-        (
-            name: None,
-            inner: Image(
-                dim: D2,
-                arrayed: true,
-                class: Depth(
-                    multi: false,
-                ),
             ),
         ),
         (
@@ -616,7 +593,7 @@
                 group: 0,
                 binding: 2,
             )),
-            ty: 30,
+            ty: 7,
             init: None,
         ),
         (
@@ -626,7 +603,7 @@
                 group: 0,
                 binding: 3,
             )),
-            ty: 31,
+            ty: 30,
             init: None,
         ),
         (
@@ -642,9 +619,7 @@
         (
             name: Some("s_lights"),
             space: Storage(
-                access: (
-                    bits: 1,
-                ),
+                access: ("LOAD"),
             ),
             binding: Some((
                 group: 0,

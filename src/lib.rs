@@ -75,8 +75,8 @@ of `Statement`s and other `Expression`s.
 
 Naga's rules for when `Expression`s are evaluated are as follows:
 
--   [`Constant`](Expression::Constant) expressions are considered to be
-    implicitly evaluated before execution begins.
+-   [`Literal`], [`Constant`], and [`ZeroValue`] expressions are
+    considered to be implicitly evaluated before execution begins.
 
 -   [`FunctionArgument`] and [`LocalVariable`] expressions are considered
     implicitly evaluated upon entry to the function to which they belong.
@@ -174,6 +174,8 @@ tree.
 [`RayQueryProceedResult`]: Expression::RayQueryProceedResult
 [`CallResult`]: Expression::CallResult
 [`Constant`]: Expression::Constant
+[`ZeroValue`]: Expression::ZeroValue
+[`Literal`]: Expression::Literal
 [`Derivative`]: Expression::Derivative
 [`FunctionArgument`]: Expression::FunctionArgument
 [`GlobalVariable`]: Expression::GlobalVariable
@@ -213,7 +215,17 @@ tree.
     clippy::rest_pat_in_fully_bound_structs,
     clippy::match_wildcard_for_single_variants
 )]
-#![cfg_attr(not(test), deny(clippy::panic))]
+#![deny(clippy::exit)]
+#![cfg_attr(
+    not(test),
+    warn(
+        clippy::dbg_macro,
+        clippy::panic,
+        clippy::print_stderr,
+        clippy::print_stdout,
+        clippy::todo
+    )
+)]
 
 mod arena;
 pub mod back;
@@ -241,6 +253,11 @@ pub const BOOL_WIDTH: Bytes = 1;
 pub type FastHashMap<K, T> = rustc_hash::FxHashMap<K, T>;
 /// Hash set that is faster but not resilient to DoS attacks.
 pub type FastHashSet<K> = rustc_hash::FxHashSet<K>;
+
+/// Insertion-order-preserving hash set (`IndexSet<K>`), but with the same
+/// hasher as `FastHashSet<K>` (faster but not resilient to DoS attacks).
+pub type FastIndexSet<K> =
+    indexmap::IndexSet<K, std::hash::BuildHasherDefault<rustc_hash::FxHasher>>;
 
 /// Map of expressions that have associated variable names
 pub(crate) type NamedExpressions = indexmap::IndexMap<
@@ -411,7 +428,7 @@ pub enum ScalarKind {
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 pub enum ArraySize {
     /// The array size is constant.
-    Constant(Handle<Constant>),
+    Constant(std::num::NonZeroU32),
     /// The array size can change at runtime.
     Dynamic,
 }
@@ -489,7 +506,7 @@ bitflags::bitflags! {
     #[cfg_attr(feature = "serialize", derive(Serialize))]
     #[cfg_attr(feature = "deserialize", derive(Deserialize))]
     #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
-    #[derive(Default)]
+    #[derive(Clone, Copy, Debug, Default, Eq, Hash, Ord, PartialEq, PartialOrd)]
     pub struct StorageAccess: u32 {
         /// Storage can be used as a source for load ops.
         const LOAD = 0x1;
@@ -789,6 +806,18 @@ pub struct Constant {
     pub name: Option<String>,
     pub specialization: Option<u32>,
     pub inner: ConstantInner,
+}
+
+#[derive(Debug, Clone, Copy, PartialOrd)]
+#[cfg_attr(feature = "serialize", derive(Serialize))]
+#[cfg_attr(feature = "deserialize", derive(Deserialize))]
+#[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
+pub enum Literal {
+    F64(f64),
+    F32(f32),
+    U32(u32),
+    I32(i32),
+    Bool(bool),
 }
 
 /// A literal scalar value, used in constants.
@@ -1171,7 +1200,7 @@ bitflags::bitflags! {
     #[cfg_attr(feature = "serialize", derive(Serialize))]
     #[cfg_attr(feature = "deserialize", derive(Deserialize))]
     #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
-    #[derive(Default)]
+    #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
     pub struct Barrier: u32 {
         /// Barrier affects all `AddressSpace::Storage` accesses.
         const STORAGE = 0x1;
@@ -1189,6 +1218,13 @@ bitflags::bitflags! {
 #[cfg_attr(feature = "deserialize", derive(Deserialize))]
 #[cfg_attr(feature = "arbitrary", derive(Arbitrary))]
 pub enum Expression {
+    /// Literal.
+    Literal(Literal),
+    /// Constant value.
+    Constant(Handle<Constant>),
+    /// Zero value of a type.
+    ZeroValue(Handle<Type>),
+
     /// Array access with a computed index.
     ///
     /// ## Typing rules
@@ -1247,8 +1283,6 @@ pub enum Expression {
         base: Handle<Expression>,
         index: u32,
     },
-    /// Constant value.
-    Constant(Handle<Constant>),
     /// Splat scalar into a vector.
     Splat {
         size: VectorSize,
@@ -1444,6 +1478,13 @@ pub enum Expression {
     CallResult(Handle<Function>),
     /// Result of an atomic operation.
     AtomicResult { ty: Handle<Type>, comparison: bool },
+    /// Result of a [`WorkGroupUniformLoad`] statement.
+    ///
+    /// [`WorkGroupUniformLoad`]: Statement::WorkGroupUniformLoad
+    WorkGroupUniformLoadResult {
+        /// The type of the result
+        ty: Handle<Type>,
+    },
     /// Get the length of an array.
     /// The expression must resolve to a pointer to an array with a dynamic size.
     ///
@@ -1597,14 +1638,16 @@ pub enum Statement {
     /// The `continuing` block and its substatements must not contain `Return`
     /// or `Kill` statements, or any `Break` or `Continue` statements targeting
     /// this loop. (It may have `Break` and `Continue` statements targeting
-    /// loops or switches nested within the `continuing` block.)
+    /// loops or switches nested within the `continuing` block.) Expressions
+    /// emitted in `body` are in scope in `continuing`.
     ///
     /// If present, `break_if` is an expression which is evaluated after the
-    /// continuing block. If its value is true, control continues after the
-    /// `Loop` statement, rather than branching back to the top of body as
-    /// usual. The `break_if` expression corresponds to a "break if" statement
-    /// in WGSL, or a loop whose back edge is an `OpBranchConditional`
-    /// instruction in SPIR-V.
+    /// continuing block. Expressions emitted in `body` or `continuing` are
+    /// considered to be in scope. If the expression's value is true, control
+    /// continues after the `Loop` statement, rather than branching back to the
+    /// top of body as usual. The `break_if` expression corresponds to a "break
+    /// if" statement in WGSL, or a loop whose back edge is an
+    /// `OpBranchConditional` instruction in SPIR-V.
     ///
     /// [`Break`]: Statement::Break
     /// [`Continue`]: Statement::Continue
@@ -1699,6 +1742,21 @@ pub enum Statement {
         /// [`AtomicResult`] expression representing this function's result.
         ///
         /// [`AtomicResult`]: crate::Expression::AtomicResult
+        result: Handle<Expression>,
+    },
+    /// Load uniformly from a uniform pointer in the workgroup address space.
+    ///
+    /// Corresponds to the [`workgroupUniformLoad`](https://www.w3.org/TR/WGSL/#workgroupUniformLoad-builtin)
+    /// built-in function of wgsl, and has the same barrier semantics
+    WorkGroupUniformLoad {
+        /// This must be of type [`Pointer`] in the [`WorkGroup`] address space
+        ///
+        /// [`Pointer`]: TypeInner::Pointer
+        /// [`WorkGroup`]: AddressSpace::WorkGroup
+        pointer: Handle<Expression>,
+        /// The [`WorkGroupUniformLoadResult`] expression representing this load's result.
+        ///
+        /// [`WorkGroupUniformLoadResult`]: Expression::WorkGroupUniformLoadResult
         result: Handle<Expression>,
     },
     /// Calls a function.

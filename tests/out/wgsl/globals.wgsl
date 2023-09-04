@@ -5,22 +5,22 @@ struct FooStruct {
 
 const Foo_1: bool = true;
 
-var<workgroup> wg: array<f32,10u>;
+var<workgroup> wg: array<f32, 10>;
 var<workgroup> at_1: atomic<u32>;
 @group(0) @binding(1) 
 var<storage, read_write> alignment: FooStruct;
 @group(0) @binding(2) 
 var<storage> dummy: array<vec2<f32>>;
 @group(0) @binding(3) 
-var<uniform> float_vecs: array<vec4<f32>,20>;
+var<uniform> float_vecs: array<vec4<f32>, 20>;
 @group(0) @binding(4) 
 var<uniform> global_vec: vec3<f32>;
 @group(0) @binding(5) 
 var<uniform> global_mat: mat3x2<f32>;
 @group(0) @binding(6) 
-var<uniform> global_nested_arrays_of_matrices_2x4_: array<array<mat2x4<f32>,2>,2>;
+var<uniform> global_nested_arrays_of_matrices_2x4_: array<array<mat2x4<f32>, 2>, 2>;
 @group(0) @binding(7) 
-var<uniform> global_nested_arrays_of_matrices_4x2_: array<array<mat4x2<f32>,2>,2>;
+var<uniform> global_nested_arrays_of_matrices_4x2_: array<array<mat4x2<f32>, 2>, 2>;
 
 fn test_msl_packed_vec3_as_arg(arg: vec3<f32>) {
     return;
@@ -36,13 +36,13 @@ fn test_msl_packed_vec3_() {
     let _e17 = idx;
     alignment.v3_[_e17] = 3.0;
     let data = alignment;
-    _ = data.v3_;
-    _ = data.v3_.zx;
+    let l0_ = data.v3_;
+    let l1_ = data.v3_.zx;
     test_msl_packed_vec3_as_arg(data.v3_);
-    _ = (data.v3_ * mat3x3<f32>(vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0)));
-    _ = (mat3x3<f32>(vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0), vec3<f32>(0.0, 0.0, 0.0)) * data.v3_);
-    _ = (data.v3_ * 2.0);
-    _ = (2.0 * data.v3_);
+    let mvm0_ = (data.v3_ * mat3x3<f32>());
+    let mvm1_ = (mat3x3<f32>() * data.v3_);
+    let svm0_ = (data.v3_ * 2.0);
+    let svm1_ = (2.0 * data.v3_);
 }
 
 @compute @workgroup_size(1, 1, 1) 

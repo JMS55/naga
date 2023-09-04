@@ -1,5 +1,5 @@
 struct Ah {
-    inner: array<f32,2>,
+    inner: array<f32, 2>,
 }
 
 @group(0) @binding(0) 
@@ -7,5 +7,5 @@ var<storage> ah: Ah;
 
 @compute @workgroup_size(1, 1, 1) 
 fn cs_main() {
-    _ = ah;
+    let ah_1 = ah;
 }

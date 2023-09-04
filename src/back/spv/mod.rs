@@ -176,6 +176,7 @@ struct LocalImageType {
 
 bitflags::bitflags! {
     /// Flags corresponding to the boolean(-ish) parameters to OpTypeImage.
+    #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
     pub struct ImageTypeFlags: u8 {
         const DEPTH = 0x1;
         const ARRAYED = 0x2;
@@ -295,12 +296,12 @@ enum LocalType {
     /// [`BindingArray`]: crate::TypeInner::BindingArray
     PointerToBindingArray {
         base: Handle<crate::Type>,
-        size: u64,
+        size: u32,
         space: crate::AddressSpace,
     },
     BindingArray {
         base: Handle<crate::Type>,
-        size: u64,
+        size: u32,
     },
     AccelerationStructure,
     RayQuery,
@@ -454,10 +455,7 @@ impl recyclable::Recyclable for CachedExpressions {
 
 #[derive(Eq, Hash, PartialEq)]
 enum CachedConstant {
-    Scalar {
-        value: crate::ScalarValue,
-        width: crate::Bytes,
-    },
+    Literal(crate::Literal),
     Composite {
         ty: LookupType,
         constituent_ids: Vec<Word>,
@@ -568,13 +566,21 @@ impl BlockContext<'_> {
     }
 
     fn get_index_constant(&mut self, index: Word) -> Word {
-        self.writer
-            .get_constant_scalar(crate::ScalarValue::Uint(index as _), 4)
+        self.writer.get_constant_scalar(crate::Literal::U32(index))
     }
 
     fn get_scope_constant(&mut self, scope: Word) -> Word {
         self.writer
-            .get_constant_scalar(crate::ScalarValue::Sint(scope as _), 4)
+            .get_constant_scalar(crate::Literal::I32(scope as _))
+    }
+
+    fn get_pointer_id(
+        &mut self,
+        handle: Handle<crate::Type>,
+        class: spirv::StorageClass,
+    ) -> Result<Word, Error> {
+        self.writer
+            .get_pointer_id(&self.ir_module.types, handle, class)
     }
 }
 
@@ -598,10 +604,10 @@ pub struct Writer {
     ///
     /// If `capabilities_available` is `Some`, then this is always a subset of
     /// that.
-    capabilities_used: crate::FastHashSet<Capability>,
+    capabilities_used: crate::FastIndexSet<Capability>,
 
     /// The set of spirv extensions used.
-    extensions_used: crate::FastHashSet<&'static str>,
+    extensions_used: crate::FastIndexSet<&'static str>,
 
     debugs: Vec<Instruction>,
     annotations: Vec<Instruction>,
@@ -628,6 +634,7 @@ pub struct Writer {
 }
 
 bitflags::bitflags! {
+    #[derive(Clone, Copy, Debug, Eq, PartialEq)]
     pub struct WriterFlags: u32 {
         /// Include debug labels for everything.
         const DEBUG = 0x1;

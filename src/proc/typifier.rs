@@ -421,6 +421,7 @@ impl<'a> ResolveContext<'a> {
                     }
                 }
             }
+            crate::Expression::Literal(lit) => TypeResolution::Value(lit.ty_inner()),
             crate::Expression::Constant(h) => match self.constants[h].inner {
                 crate::ConstantInner::Scalar { width, ref value } => {
                     TypeResolution::Value(Ti::Scalar {
@@ -430,6 +431,7 @@ impl<'a> ResolveContext<'a> {
                 }
                 crate::ConstantInner::Composite { ty, components: _ } => TypeResolution::Handle(ty),
             },
+            crate::Expression::ZeroValue(ty) => TypeResolution::Handle(ty),
             crate::Expression::Splat { size, value } => match *past(value)?.inner_with(types) {
                 Ti::Scalar { kind, width } => {
                     TypeResolution::Value(Ti::Vector { size, kind, width })
@@ -656,6 +658,7 @@ impl<'a> ResolveContext<'a> {
                 | crate::BinaryOperator::ShiftRight => past(left)?.clone(),
             },
             crate::Expression::AtomicResult { ty, .. } => TypeResolution::Handle(ty),
+            crate::Expression::WorkGroupUniformLoadResult { ty } => TypeResolution::Handle(ty),
             crate::Expression::Select { accept, .. } => past(accept)?.clone(),
             crate::Expression::Derivative { expr, .. } => past(expr)?.clone(),
             crate::Expression::Relational { fun, argument } => match fun {

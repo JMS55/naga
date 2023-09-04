@@ -11,6 +11,7 @@ const BASE_DIR_IN: &str = "tests/in";
 const BASE_DIR_OUT: &str = "tests/out";
 
 bitflags::bitflags! {
+    #[derive(Clone, Copy)]
     struct Targets: u32 {
         const IR = 0x1;
         const ANALYSIS = 0x2;
@@ -347,56 +348,30 @@ fn write_output_hlsl(
     // We need a config file for validation script
     // This file contains an info about profiles (shader stages) contains inside generated shader
     // This info will be passed to dxc
-    let mut config_str = String::new();
-    let mut vertex_str = String::from("vertex=(");
-    let mut fragment_str = String::from("fragment=(");
-    let mut compute_str = String::from("compute=(");
+    let mut config = hlsl_snapshots::Config::empty();
     for (index, ep) in module.entry_points.iter().enumerate() {
         let name = match reflection_info.entry_point_names[index] {
             Ok(ref name) => name,
             Err(_) => continue,
         };
         match ep.stage {
-            naga::ShaderStage::Vertex => {
-                write!(
-                    vertex_str,
-                    "{}:{}_{} ",
-                    name,
-                    ep.stage.to_hlsl_str(),
-                    options.shader_model.to_str(),
-                )
-                .unwrap();
-            }
-            naga::ShaderStage::Fragment => {
-                write!(
-                    fragment_str,
-                    "{}:{}_{} ",
-                    name,
-                    ep.stage.to_hlsl_str(),
-                    options.shader_model.to_str(),
-                )
-                .unwrap();
-            }
-            naga::ShaderStage::Compute => {
-                write!(
-                    compute_str,
-                    "{}:{}_{} ",
-                    name,
-                    ep.stage.to_hlsl_str(),
-                    options.shader_model.to_str(),
-                )
-                .unwrap();
-            }
+            naga::ShaderStage::Vertex => &mut config.vertex,
+            naga::ShaderStage::Fragment => &mut config.fragment,
+            naga::ShaderStage::Compute => &mut config.compute,
         }
+        .push(hlsl_snapshots::ConfigItem {
+            entry_point: name.clone(),
+            target_profile: format!(
+                "{}_{}",
+                ep.stage.to_hlsl_str(),
+                options.shader_model.to_str()
+            ),
+        });
     }
 
-    writeln!(config_str, "{vertex_str})\n{fragment_str})\n{compute_str})").unwrap();
-
-    fs::write(
-        destination.join(format!("hlsl/{file_name}.hlsl.config")),
-        config_str,
-    )
-    .unwrap();
+    config
+        .to_file(destination.join(format!("hlsl/{file_name}.ron")))
+        .unwrap();
 }
 
 #[cfg(feature = "wgsl-out")]
@@ -426,9 +401,14 @@ fn convert_wgsl() {
 
     let root = env!("CARGO_MANIFEST_DIR");
     let inputs = [
+        // TODO: merge array-in-ctor and array-in-function-return-type tests after fix HLSL issue https://github.com/gfx-rs/naga/issues/1930
         (
             "array-in-ctor",
             Targets::SPIRV | Targets::METAL | Targets::GLSL | Targets::HLSL | Targets::WGSL,
+        ),
+        (
+            "array-in-function-return-type",
+            Targets::SPIRV | Targets::METAL | Targets::GLSL | Targets::WGSL,
         ),
         (
             "empty",
@@ -576,10 +556,15 @@ fn convert_wgsl() {
             "workgroup-var-init",
             Targets::WGSL | Targets::GLSL | Targets::SPIRV | Targets::HLSL | Targets::METAL,
         ),
+        (
+            "workgroup-uniform-load",
+            Targets::WGSL | Targets::GLSL | Targets::SPIRV | Targets::HLSL | Targets::METAL,
+        ),
         ("sprite", Targets::SPIRV),
         ("force_point_size_vertex_shader_webgl", Targets::GLSL),
         ("invariant", Targets::GLSL),
         ("ray-query", Targets::SPIRV | Targets::METAL),
+        ("hlsl-keyword", Targets::HLSL),
     ];
 
     for &(name, targets) in inputs.iter() {
@@ -640,6 +625,11 @@ fn convert_spv_all() {
     convert_spv("degrees", false, Targets::empty());
     convert_spv("binding-arrays.dynamic", true, Targets::WGSL);
     convert_spv("binding-arrays.static", true, Targets::WGSL);
+    convert_spv(
+        "do-while",
+        true,
+        Targets::METAL | Targets::GLSL | Targets::HLSL | Targets::WGSL,
+    );
 }
 
 #[cfg(feature = "glsl-in")]
