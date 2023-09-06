@@ -11,12 +11,12 @@ struct FragmentIn {
     @location(0) @interpolate(flat) index: u32,
 }
 
-@group(0) @binding(0) 
+@group(0) @binding(0)
 var<storage> storage_array: binding_array<Foo, 1>;
-@group(0) @binding(10) 
+@group(0) @binding(10)
 var<uniform> uni: UniformIndex;
 
-@fragment 
+@fragment
 fn main(fragment_in: FragmentIn) -> @location(0) @interpolate(flat) u32 {
     var u1_: u32;
 
@@ -34,6 +34,10 @@ fn main(fragment_in: FragmentIn) -> @location(0) @interpolate(flat) u32 {
     u1_ = (_e24 + _e23);
     let _e31 = u1_;
     u1_ = (_e31 + arrayLength((&storage_array[0].far)));
-    let _e33 = u1_;
-    return _e33;
+    let _e37 = u1_;
+    u1_ = (_e37 + arrayLength((&storage_array[uniform_index].far)));
+    let _e43 = u1_;
+    u1_ = (_e43 + arrayLength((&storage_array[non_uniform_index].far)));
+    let _e45 = u1_;
+    return _e45;
 }
